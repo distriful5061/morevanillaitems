@@ -1,0 +1,6 @@
+name: Morevanillaitems
+version: '${project.version}'
+main: morevanillaitems.distriful5061.github.com.morevanillaitems.Morevanillaitems
+api-version: 1.18
+authors: [ distriful5061 ]
+description: aiueo
