@@ -4,3 +4,9 @@ main: morevanillaitems.distriful5061.github.com.morevanillaitems.Morevanillaitem
 api-version: 1.18
 authors: [ distriful5061 ]
 description: aiueo
+commands:
+  craft:
+    description: craft
+  enderchest:
+    aliases: [e]
+    description: Enderchest
