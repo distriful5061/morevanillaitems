@@ -13,7 +13,7 @@ public class CommandClass implements CommandExecutor {
     public static ArrayList<String> commandlist = new ArrayList<>();
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        String commandname = sender.getName();
+        String commandname = command.getName();
         if (commandname.equalsIgnoreCase("craft")) {
             Morevanillaitems.displayMenu((Player) sender);
             return true;

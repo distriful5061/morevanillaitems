@@ -4,6 +4,12 @@ main: morevanillaitems.distriful5061.github.com.morevanillaitems.Morevanillaitem
 api-version: 1.18
 authors: [ distriful5061 ]
 description: aiueo
+depend:
+  -https://github.com/IPVP-MC/canvas
+  -https://github.com/tr7zw/Item-NBT-API/
 commands:
   craft:
     description: craft
+  enderchest:
+    aliases: [e]
+    description: Enderchest

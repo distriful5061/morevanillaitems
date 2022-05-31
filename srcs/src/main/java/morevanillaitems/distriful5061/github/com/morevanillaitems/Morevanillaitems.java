@@ -1,5 +1,6 @@
 package morevanillaitems.distriful5061.github.com.morevanillaitems;
 
+import de.tr7zw.nbtinjector.NBTInjector;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -9,10 +10,10 @@ import org.ipvp.canvas.slot.Slot;
 import org.ipvp.canvas.type.ChestMenu;
 
 public final class Morevanillaitems extends JavaPlugin {
-    private Morevanillaitems plugin;
+    private static Morevanillaitems plugin;
 
 
-    public Morevanillaitems getPlugin(){
+    public static Morevanillaitems getPlugin(){
         return plugin;
     }
 
@@ -23,16 +24,15 @@ public final class Morevanillaitems extends JavaPlugin {
     private static Menu createMenu(String title, Integer rows) {
         return ChestMenu.builder(rows)
                 .title(title)
-                .redraw(true)
                 .build();
     }
 
     public static void displayMenu(Player player){
         Menu menu = createMenu("test",4);
-        menu.open(player);
         menu.setCloseHandler((p, menu1) -> {
-            Slot a = (Slot) menu1.getSlot(1).getItem(p);
+            ItemStack a = menu1.getSlot(1).getItem(p);
         });
+        menu.open(player);
     }
 
     @Override
@@ -41,8 +41,10 @@ public final class Morevanillaitems extends JavaPlugin {
         plugin = this;
         loggerinfo("Minigame plugin booting...");
         Bukkit.getServer().getPluginManager().registerEvents(new lis(), this);
+        Bukkit.getPluginManager().registerEvents(new MenuFunctionListener(), this);
         CommandClass.commandlist.add("craft");
         CommandClass.commandlist.add("enderchest");
+        NBTInjector.inject();
     }
 
     @Override
