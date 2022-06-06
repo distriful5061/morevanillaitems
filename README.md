@@ -12,6 +12,8 @@
 
 GithubのPull requestsやIssueに書いたソースや個人情報盗まれても責任は負いません。というかそもそも書くなよな！！！
 
+後著作権等は全て[distriful5061](https://twitter.com/distriful)に帰属しています。法律関係でなんかトラブルあったら周りの人になんとかしてもらおうと思います
+
 # 使い方
 
 ReleasesのLatestってタグが付いてるやつをインストールする
