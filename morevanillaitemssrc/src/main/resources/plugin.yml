@@ -13,7 +13,7 @@ commands:
   hp:
     description: send ur hp
   test:
-
+    description: a
 permissions:
   morevanillaitems.*:
     description: astarisuku

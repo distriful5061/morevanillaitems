@@ -42,14 +42,13 @@ public final class Morevanillaitems extends JavaPlugin {
         loggerinfo("Minigame plugin booting...");
         Bukkit.getServer().getPluginManager().registerEvents(new lis(), this);
         Bukkit.getPluginManager().registerEvents(new MenuFunctionListener(), this);
-        Bukkit.getPluginCommand("craft").setExecutor(new CommandClass());
-        Bukkit.getPluginCommand("enderchest").setExecutor(new CommandClass());
-        Bukkit.getPluginCommand("hp").setExecutor(new CommandClass());
-        Bukkit.getPluginCommand("test").setExecutor(new CommandClass());
         CommandClass.commandlist.add("craft");
         CommandClass.commandlist.add("enderchest");
         CommandClass.commandlist.add("hp");
         CommandClass.commandlist.add("test");
+        for(String commandname : CommandClass.commandlist){
+            Bukkit.getPluginCommand(commandname).setExecutor(new CommandClass());
+        }
         NBTInjector.inject();
     }
 

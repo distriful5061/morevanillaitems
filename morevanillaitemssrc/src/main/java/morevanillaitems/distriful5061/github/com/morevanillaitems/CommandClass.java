@@ -17,9 +17,12 @@ public class CommandClass implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         String commandname = command.getName();
+        if(!(commandlist.contains(commandname))) return false;
         switch(commandname.toLowerCase()){
             case "craft":
                 Morevanillaitems.displayMenu((Player) sender);
+                return true;
+            case "enderchest":
                 return true;
             case "hp":
                 Player p = Bukkit.getPlayer(sender.getName());

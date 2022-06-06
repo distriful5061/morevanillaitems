@@ -43,7 +43,6 @@ public class lis implements Listener{
     HashMap<Player, Boolean> BowLeftClicked = new HashMap<>();
     HashMap<UUID, Player> ArrowShooter = new HashMap<>();
     HashMap<UUID, Integer> LifeStealLevel = new HashMap<>();
-    HashMap<UUID, Double> ArrowDamage = new HashMap<>();
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e){
@@ -94,26 +93,26 @@ public class lis implements Listener{
 
     @EventHandler
     public void onHitArrow(EntityDamageByEntityEvent e){
-        //NBTEntity arrow = new NBTEntity(e.getDamager());
-        //Bukkit.broadcastMessage(String.valueOf(arrow.hasKey("shootbyplayername")));
         if(e.getCause().equals(EntityDamageEvent.DamageCause.PROJECTILE) && e.getDamager().getType() == EntityType.ARROW) {
-            ///* For Debug
+            UUID arrowuuid = e.getDamager().getUniqueId();
+            /* For Debug
             Bukkit.broadcastMessage(e.getEntity().getName() + ":" + e.getDamage() + ":" + e.getEntity().getFireTicks() + ":" + e.getDamager().getFireTicks());
             e.getEntity().setFireTicks(e.getDamager().getFireTicks());
-            //*/
-            if(!(ArrowShooter.containsKey(e.getEntity().getUniqueId()))) return;
+            Bukkit.broadcastMessage("Ok");
+            Bukkit.broadcastMessage(String.valueOf(ArrowShooter.containsKey(arrowuuid)));
+            */
+            if(!(ArrowShooter.containsKey(arrowuuid))) return;
 
-            //ArrowShooter.put(arrow.getUniqueId(),e.getPlayer());
-            //LifeStealLevel.put(e.getPlayer(),nbt_lifesteal);
-
-            Entity arrow = e.getDamager();
-
-            Player p = ArrowShooter.get(arrow.getUniqueId());
-            double damagecnt = ArrowDamage.get(arrow.getUniqueId()) * (LifeStealLevel.get(arrow.getUniqueId()) / 100);
-            Bukkit.broadcastMessage("damagecnt:"+damagecnt);// For Debug
+            Player p = ArrowShooter.get(arrowuuid);
+            double arrdmg = e.getDamage();
+            double lifesteallvl = LifeStealLevel.get(arrowuuid);
+            double damagecnt = arrdmg * (lifesteallvl / 100);
+            //Bukkit.broadcastMessage("damagecnt:"+damagecnt+":"+lifesteallvl+":"+arrdmg+":"+lifesteallvl / 100);// For Debug
             AttributeInstance urself = Objects.requireNonNull(p).getAttribute(Attribute.valueOf("GENERIC_MAX_HEALTH"));
             double playermaxlife = Objects.requireNonNull(urself).getValue();
             p.setHealth(Math.min(p.getHealth() + damagecnt, playermaxlife));
+            ArrowShooter.remove(arrowuuid);
+            LifeStealLevel.remove(arrowuuid);
         }
     }
 
@@ -171,7 +170,6 @@ public class lis implements Listener{
                 }
                 ArrowShooter.put(arrow.getUniqueId(),e.getPlayer());
                 LifeStealLevel.put(arrow.getUniqueId(),nbt_lifesteal);
-                ArrowDamage.put(arrow.getUniqueId(),nbt_damage + nbt_power);
 
                 //Bukkit.broadcastMessage(String.valueOf(2.0 + (a * 1.5)));
 
@@ -221,7 +219,6 @@ public class lis implements Listener{
                 }
                 ArrowShooter.put(arrow.getUniqueId(),e.getPlayer());
                 LifeStealLevel.put(arrow.getUniqueId(),nbt_lifesteal);
-                ArrowDamage.put(arrow.getUniqueId(),nbt_damage + nbt_power);
 
                 //Bukkit.broadcastMessage(String.valueOf(2.0 + (a * 1.5)));
 
