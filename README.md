@@ -30,3 +30,9 @@ Pluginsフォルダーに入れる
 
 例:
 give @s bow{noreducearrowsprobability:1,arrowfirerate:1,power:1,flame:1,damage:2}
+
+# 開発者の方へ
+
+ソースコードを持ってくる場合は改変した場合でも元のライセンスを継承(任意)し、こちらのリポジトリのリンクをソースコードや、README.mdなどに明記(強制)する必要があります。
+
+ちなみに公開リポジトリなどを使用する場合は、README.mdが無くても使用していることをソースコード以外に明記する必要があります。
