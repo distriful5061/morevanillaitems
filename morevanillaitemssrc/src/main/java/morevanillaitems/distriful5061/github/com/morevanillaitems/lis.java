@@ -9,10 +9,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -25,10 +22,10 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.projectiles.ProjectileSource;
 
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.UUID;
 
 public class lis implements Listener{
     /*
@@ -44,6 +41,9 @@ public class lis implements Listener{
         /give @s bow{noreducearrowsprobability:1,arrowfirerate:1,power:1,flame:1,damage:2,lifesteal:50}
      */
     HashMap<Player, Boolean> BowLeftClicked = new HashMap<>();
+    HashMap<UUID, Player> ArrowShooter = new HashMap<>();
+    HashMap<UUID, Integer> LifeStealLevel = new HashMap<>();
+    HashMap<UUID, Double> ArrowDamage = new HashMap<>();
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e){
@@ -62,8 +62,7 @@ public class lis implements Listener{
             NBTItem playerbow = new NBTItem(Objects.requireNonNull(e.getBow()));
             if(playerbow.hasKey("noreducearrowsprobability")){
                 if(Math.ceil(Math.random() * 100) <= playerbow.getInteger("noreducearrowsprobability")){
-                    Player p = Bukkit.getPlayer(e.getEntity().getName());
-                    Objects.requireNonNull(p).getInventory().addItem(new ItemStack(Material.ARROW,1));
+                    e.setConsumeItem(false);
                 }
             }
             if(playerbow.hasKey("flame")){
@@ -95,21 +94,26 @@ public class lis implements Listener{
 
     @EventHandler
     public void onHitArrow(EntityDamageByEntityEvent e){
+        //NBTEntity arrow = new NBTEntity(e.getDamager());
+        //Bukkit.broadcastMessage(String.valueOf(arrow.hasKey("shootbyplayername")));
         if(e.getCause().equals(EntityDamageEvent.DamageCause.PROJECTILE) && e.getDamager().getType() == EntityType.ARROW) {
             ///* For Debug
             Bukkit.broadcastMessage(e.getEntity().getName() + ":" + e.getDamage() + ":" + e.getEntity().getFireTicks() + ":" + e.getDamager().getFireTicks());
             e.getEntity().setFireTicks(e.getDamager().getFireTicks());
             //*/
+            if(!(ArrowShooter.containsKey(e.getEntity().getUniqueId()))) return;
 
-            NBTEntity arrow = new NBTEntity(e.getDamager());
-            Player p = Bukkit.getPlayer(arrow.getString("shootbyplayername"));
-            double damagecnt = arrow.getDouble("damage") * (arrow.getInteger("lifesteallevel") / 100);
+            //ArrowShooter.put(arrow.getUniqueId(),e.getPlayer());
+            //LifeStealLevel.put(e.getPlayer(),nbt_lifesteal);
+
+            Entity arrow = e.getDamager();
+
+            Player p = ArrowShooter.get(arrow.getUniqueId());
+            double damagecnt = ArrowDamage.get(arrow.getUniqueId()) * (LifeStealLevel.get(arrow.getUniqueId()) / 100);
+            Bukkit.broadcastMessage("damagecnt:"+damagecnt);// For Debug
             AttributeInstance urself = Objects.requireNonNull(p).getAttribute(Attribute.valueOf("GENERIC_MAX_HEALTH"));
             double playermaxlife = Objects.requireNonNull(urself).getValue();
-            p.setHealth(p.getHealth() + damagecnt);
-            if(p.getHealth() > playermaxlife){
-                p.setHealth(playermaxlife);
-            }
+            p.setHealth(Math.min(p.getHealth() + damagecnt, playermaxlife));
         }
     }
 
@@ -130,6 +134,7 @@ public class lis implements Listener{
         NBTItem playeritemnbt = new NBTItem(iteminmainhand);
         if(e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK){
             if(playeritemmaterial == Material.BOW && playeritemnbt.hasKey("arrowfirerate")) {
+                e.setCancelled(true);
                 if(BowLeftClicked.get(e.getPlayer())) return;
                 if( !(playerinv.contains(Material.ARROW)) && e.getPlayer().getGameMode() != GameMode.CREATIVE) return;
                 if (e.getPlayer().getGameMode() != GameMode.CREATIVE) {
@@ -142,7 +147,6 @@ public class lis implements Listener{
                     }
                 }
                 Arrow arrow = e.getPlayer().launchProjectile(Arrow.class);
-                NBTEntity nbtarrow = new NBTEntity(arrow);
                 //Bukkit.broadcastMessage(String.valueOf(arrow.getDamage()));
                 //int enchant_power = iteminmainhand.getEnchantmentLevel(Enchantment.ARROW_DAMAGE);
 
@@ -165,8 +169,9 @@ public class lis implements Listener{
                 if(playeritemnbt.hasKey("lifesteal")){
                     nbt_lifesteal = playeritemnbt.getInteger("lifesteal");
                 }
-                nbtarrow.setInteger("lifesteallevel",nbt_lifesteal);
-                nbtarrow.setString("shootbyplayername",e.getPlayer().getName());
+                ArrowShooter.put(arrow.getUniqueId(),e.getPlayer());
+                LifeStealLevel.put(arrow.getUniqueId(),nbt_lifesteal);
+                ArrowDamage.put(arrow.getUniqueId(),nbt_damage + nbt_power);
 
                 //Bukkit.broadcastMessage(String.valueOf(2.0 + (a * 1.5)));
 
@@ -179,6 +184,7 @@ public class lis implements Listener{
             }
         } else if(e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK){
             if(playeritemmaterial == Material.BOW && playeritemnbt.hasKey("arrowfirerate")) {
+                e.setCancelled(true);
                 if(BowLeftClicked.get(e.getPlayer())) return;
                 if( !(playerinv.contains(Material.ARROW)) && e.getPlayer().getGameMode() != GameMode.CREATIVE) return;
                 if (e.getPlayer().getGameMode() != GameMode.CREATIVE) {
@@ -191,7 +197,6 @@ public class lis implements Listener{
                     }
                 }
                 Arrow arrow = e.getPlayer().launchProjectile(Arrow.class);
-                NBTEntity nbtarrow = new NBTEntity(arrow);
                 //Bukkit.broadcastMessage(String.valueOf(arrow.getDamage()));
                 //int enchant_power = iteminmainhand.getEnchantmentLevel(Enchantment.ARROW_DAMAGE);
 
@@ -214,8 +219,9 @@ public class lis implements Listener{
                 if(playeritemnbt.hasKey("lifesteal")){
                     nbt_lifesteal = playeritemnbt.getInteger("lifesteal");
                 }
-                nbtarrow.setInteger("lifesteallevel",nbt_lifesteal);
-                nbtarrow.setString("shootbyplayername",e.getPlayer().getName());
+                ArrowShooter.put(arrow.getUniqueId(),e.getPlayer());
+                LifeStealLevel.put(arrow.getUniqueId(),nbt_lifesteal);
+                ArrowDamage.put(arrow.getUniqueId(),nbt_damage + nbt_power);
 
                 //Bukkit.broadcastMessage(String.valueOf(2.0 + (a * 1.5)));
 

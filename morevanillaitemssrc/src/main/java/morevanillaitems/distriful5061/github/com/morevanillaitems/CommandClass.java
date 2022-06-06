@@ -1,6 +1,8 @@
 package morevanillaitems.distriful5061.github.com.morevanillaitems;
 
 import org.bukkit.Bukkit;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -21,7 +23,13 @@ public class CommandClass implements CommandExecutor {
                 return true;
             case "hp":
                 Player p = Bukkit.getPlayer(sender.getName());
-                sender.sendMessage(String.valueOf(Objects.requireNonNull(p).getHealth()));
+                AttributeInstance urself = Objects.requireNonNull(p).getAttribute(Attribute.valueOf("GENERIC_MAX_HEALTH"));
+                double playermaxlife = Objects.requireNonNull(urself).getValue();
+                sender.sendMessage(playermaxlife +":"+p.getHealth());
+                return true;
+            case "test":
+                sender.sendMessage("test");
+                return true;
         }
         return false;
     }
