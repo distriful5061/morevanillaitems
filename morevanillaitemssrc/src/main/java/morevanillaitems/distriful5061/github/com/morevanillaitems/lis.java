@@ -27,7 +27,6 @@ import org.bukkit.projectiles.ProjectileSource;
 
 import java.util.HashMap;
 import java.util.Objects;
-import java.util.UUID;
 
 public class lis implements Listener{
     /*
@@ -38,8 +37,9 @@ public class lis implements Listener{
         power -パワー(1Lv=0.5)
         flame -ただ燃えるだけ(1Lv=40Tick)
         damage -基礎ダメージ
+        lifesteal -回復(1Lv=ダメージの1%)
 
-        /give @s bow{noreducearrowsprobability:1,arrowfirerate:1,power:1,flame:1,damage:2}
+        /give @s bow{noreducearrowsprobability:1,arrowfirerate:1,power:1,flame:1,damage:2,lifesteal:50}
      */
     HashMap<Player, Boolean> BowLeftClicked = new HashMap<>();
 
@@ -80,7 +80,12 @@ public class lis implements Listener{
             arrow.setDouble("damage",nbt_damage + (nbt_power * 0.5));
 
             if(e.getEntity().getType() == EntityType.PLAYER) {
-                // do anything
+                int nbt_lifesteal = 0;//nbtarrow系の処理
+                if(playerbow.hasKey("lifesteal")){
+                    nbt_lifesteal = playerbow.getInteger("lifesteal");
+                }
+                arrow.setInteger("lifesteallevel",nbt_lifesteal);
+                arrow.setString("shootbyplayername",e.getEntity().getName());
             }
         }
     }
@@ -88,10 +93,22 @@ public class lis implements Listener{
     @EventHandler
     public void onHitArrow(EntityDamageByEntityEvent e){
         if(e.getCause().equals(EntityDamageEvent.DamageCause.PROJECTILE) && e.getDamager().getType() == EntityType.ARROW) {
-            ///*
+            ///* For Debug
             Bukkit.broadcastMessage(e.getEntity().getName() + ":" + e.getDamage() + ":" + e.getEntity().getFireTicks() + ":" + e.getDamager().getFireTicks());
             e.getEntity().setFireTicks(e.getDamager().getFireTicks());
             //*/
+
+            NBTEntity arrow = new NBTEntity(e.getDamager());
+            Player p = Bukkit.getPlayer(arrow.getString("shootbyplayername"));
+            if(p.getHealth() != p.getMaxHealth()){
+                double damagecnt = arrow.getDouble("damage") * (arrow.getInteger("lifesteallevel") / 100);
+                if(p.getHealth()+damagecnt > p.getMaxHealth()){
+                    double sabun = damagecnt - p.getMaxHealth();
+                    p.setHealth(p.getHealth() + sabun);
+                } else {
+                    p.setHealth(p.getHealth() + damagecnt);
+                }
+            }
         }
     }
 
@@ -122,23 +139,36 @@ public class lis implements Listener{
                         playerinv.removeItem(new ItemStack(Material.ARROW, 1));
                     }
                 }
-                int nbt_power = 0;
-                if(playeritemnbt.hasKey("power")){
-                    nbt_power = playeritemnbt.getInteger("power");
-                }
-                int nbt_damage = 2;
-                if(playeritemnbt.hasKey("damage")) {
-                    nbt_damage = playeritemnbt.getInteger("damage");
-                }
                 Arrow arrow = e.getPlayer().launchProjectile(Arrow.class);
+                NBTEntity nbtarrow = new NBTEntity(arrow);
                 //Bukkit.broadcastMessage(String.valueOf(arrow.getDamage()));
                 //int enchant_power = iteminmainhand.getEnchantmentLevel(Enchantment.ARROW_DAMAGE);
-                arrow.setDamage(nbt_damage + (nbt_power * 0.5));
+
+                double nbt_power = 0;
+                if(playeritemnbt.hasKey("power")){//パワーレベル 1Lv=0.5ダメージ
+                    nbt_power = playeritemnbt.getDouble("power");
+                }
+                double nbt_damage = 2;
+                if(playeritemnbt.hasKey("damage")) {//基礎ダメージ 小数点まで可
+                    nbt_damage = playeritemnbt.getDouble("damage");
+                }
+
+                arrow.setDamage(nbt_damage + (nbt_power * 0.5));//パワーレベル 1Lv=0.5ダメージ
                 if(playeritemnbt.hasKey("flame")){
-                    arrow.setFireTicks(40 * playeritemnbt.getInteger("flame"));
+                    arrow.setFireTicks(40 * playeritemnbt.getInteger("flame"));//2秒(40Tick) * flameレベル
                     arrow.setVisualFire(true);
                 }
+
+                int nbt_lifesteal = 0;//nbtarrow系の処理
+                if(playeritemnbt.hasKey("lifesteal")){
+                    nbt_lifesteal = playeritemnbt.getInteger("lifesteal");
+                }
+                nbtarrow.setInteger("lifesteallevel",nbt_lifesteal);
+                nbtarrow.setString("shootbyplayername",e.getPlayer().getName());
+
                 //Bukkit.broadcastMessage(String.valueOf(2.0 + (a * 1.5)));
+
+                // クールダウン処理。矢に関して処理をする場合はここより上記に書いてください
                 BowLeftClicked.replace(e.getPlayer(),true);
                 Bukkit.getScheduler().runTaskLater(Morevanillaitems.getPlugin(), () -> {
                     BowLeftClicked.replace(e.getPlayer(),false);
@@ -147,7 +177,6 @@ public class lis implements Listener{
             }
         } else if(e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK){
             if(playeritemmaterial == Material.BOW && playeritemnbt.hasKey("arrowfirerate")) {
-                e.setCancelled(true);
                 if(BowLeftClicked.get(e.getPlayer())) return;
                 if( !(playerinv.contains(Material.ARROW)) && e.getPlayer().getGameMode() != GameMode.CREATIVE) return;
                 if (e.getPlayer().getGameMode() != GameMode.CREATIVE) {
@@ -159,19 +188,36 @@ public class lis implements Listener{
                         playerinv.removeItem(new ItemStack(Material.ARROW, 1));
                     }
                 }
-                int nbt_power = 0;
-                if(playeritemnbt.hasKey("power")){
-                    nbt_power = playeritemnbt.getInteger("power");
-                }
                 Arrow arrow = e.getPlayer().launchProjectile(Arrow.class);
+                NBTEntity nbtarrow = new NBTEntity(arrow);
                 //Bukkit.broadcastMessage(String.valueOf(arrow.getDamage()));
                 //int enchant_power = iteminmainhand.getEnchantmentLevel(Enchantment.ARROW_DAMAGE);
-                arrow.setDamage(2.0 + (nbt_power * 0.5));
+
+                double nbt_power = 0;
+                if(playeritemnbt.hasKey("power")){//パワーレベル 1Lv=0.5ダメージ
+                    nbt_power = playeritemnbt.getDouble("power");
+                }
+                double nbt_damage = 2;
+                if(playeritemnbt.hasKey("damage")) {//基礎ダメージ 小数点まで可
+                    nbt_damage = playeritemnbt.getDouble("damage");
+                }
+
+                arrow.setDamage(nbt_damage + (nbt_power * 0.5));//パワーレベル 1Lv=0.5ダメージ
                 if(playeritemnbt.hasKey("flame")){
-                    arrow.setFireTicks(40 * playeritemnbt.getInteger("flame"));
+                    arrow.setFireTicks(40 * playeritemnbt.getInteger("flame"));//2秒(40Tick) * flameレベル
                     arrow.setVisualFire(true);
                 }
+
+                int nbt_lifesteal = 0;//nbtarrow系の処理
+                if(playeritemnbt.hasKey("lifesteal")){
+                    nbt_lifesteal = playeritemnbt.getInteger("lifesteal");
+                }
+                nbtarrow.setInteger("lifesteallevel",nbt_lifesteal);
+                nbtarrow.setString("shootbyplayername",e.getPlayer().getName());
+
                 //Bukkit.broadcastMessage(String.valueOf(2.0 + (a * 1.5)));
+
+                // クールダウン処理。矢に関して処理をする場合はここより上記に書いてください
                 BowLeftClicked.replace(e.getPlayer(),true);
                 Bukkit.getScheduler().runTaskLater(Morevanillaitems.getPlugin(), () -> {
                     BowLeftClicked.replace(e.getPlayer(),false);
