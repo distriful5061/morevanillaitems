@@ -44,6 +44,11 @@ public final class Morevanillaitems extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new MenuFunctionListener(), this);
         CommandClass.commandlist.add("craft");
         CommandClass.commandlist.add("enderchest");
+        CommandClass.commandlist.add("hp");
+        CommandClass.commandlist.add("test");
+        for(String commandname : CommandClass.commandlist){
+            Bukkit.getPluginCommand(commandname).setExecutor(new CommandClass());
+        }
         NBTInjector.inject();
     }
 

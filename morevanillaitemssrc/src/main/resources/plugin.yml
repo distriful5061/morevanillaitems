@@ -10,3 +10,27 @@ commands:
   enderchest:
     aliases: [e]
     description: Enderchest
+  hp:
+    description: send ur hp
+  test:
+    description: a
+permissions:
+  morevanillaitems.*:
+    description: astarisuku
+    default: op
+    children:
+      morevanillaitems.commands.craft: true
+      morevanillaitems.commands.enderchest: true
+      morevanillaitems.commands.hp: true
+  morevanillaitems.commands.craft:
+    description: kurahuto
+    default: true
+  morevanillaitems.commands.enderchest:
+    description: ennda-tixesuto
+    default: true
+  morevanillaitems.commands.hp:
+    description: hp
+    default: op
+  morevanillaitems.commands.test:
+    description: test
+    default: op
