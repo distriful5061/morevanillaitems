@@ -10,3 +10,5 @@ commands:
   enderchest:
     aliases: [e]
     description: Enderchest
+  hp:
+    description: send ur hp

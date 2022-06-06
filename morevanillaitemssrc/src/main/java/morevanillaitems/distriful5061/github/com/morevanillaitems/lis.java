@@ -7,6 +7,8 @@ import de.tr7zw.nbtapi.NBTItem;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -59,8 +61,9 @@ public class lis implements Listener{
             //Bukkit.broadcastMessage(e.getEntity().getName());
             NBTItem playerbow = new NBTItem(Objects.requireNonNull(e.getBow()));
             if(playerbow.hasKey("noreducearrowsprobability")){
-                if(Math.ceil(Math.random() * 100) < playerbow.getInteger("noreducearrowsprobability")){
-                    e.setConsumeItem(false);
+                if(Math.ceil(Math.random() * 100) <= playerbow.getInteger("noreducearrowsprobability")){
+                    Player p = Bukkit.getPlayer(e.getEntity().getName());
+                    Objects.requireNonNull(p).getInventory().addItem(new ItemStack(Material.ARROW,1));
                 }
             }
             if(playerbow.hasKey("flame")){
@@ -100,14 +103,12 @@ public class lis implements Listener{
 
             NBTEntity arrow = new NBTEntity(e.getDamager());
             Player p = Bukkit.getPlayer(arrow.getString("shootbyplayername"));
-            if(p.getHealth() != p.getMaxHealth()){
-                double damagecnt = arrow.getDouble("damage") * (arrow.getInteger("lifesteallevel") / 100);
-                if(p.getHealth()+damagecnt > p.getMaxHealth()){
-                    double sabun = damagecnt - p.getMaxHealth();
-                    p.setHealth(p.getHealth() + sabun);
-                } else {
-                    p.setHealth(p.getHealth() + damagecnt);
-                }
+            double damagecnt = arrow.getDouble("damage") * (arrow.getInteger("lifesteallevel") / 100);
+            AttributeInstance urself = Objects.requireNonNull(p).getAttribute(Attribute.valueOf("GENERIC_MAX_HEALTH"));
+            double playermaxlife = Objects.requireNonNull(urself).getValue();
+            p.setHealth(p.getHealth() + damagecnt);
+            if(p.getHealth() > playermaxlife){
+                p.setHealth(playermaxlife);
             }
         }
     }
@@ -124,6 +125,7 @@ public class lis implements Listener{
         PlayerInventory playerinv = e.getPlayer().getInventory();
         ItemStack iteminmainhand = playerinv.getItemInMainHand();
         Material playeritemmaterial = iteminmainhand.getType();
+
         if(playeritemmaterial == Material.AIR) return;
         NBTItem playeritemnbt = new NBTItem(iteminmainhand);
         if(e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK){
@@ -132,7 +134,7 @@ public class lis implements Listener{
                 if( !(playerinv.contains(Material.ARROW)) && e.getPlayer().getGameMode() != GameMode.CREATIVE) return;
                 if (e.getPlayer().getGameMode() != GameMode.CREATIVE) {
                     if(playeritemnbt.hasKey("noreducearrowsprobability")) {
-                        if(Math.ceil(Math.random() * 100) > playeritemnbt.getInteger("noreducearrowsprobability")){
+                        if(Math.ceil(Math.random() * 100) >= playeritemnbt.getInteger("noreducearrowsprobability")){
                             playerinv.removeItem(new ItemStack(Material.ARROW, 1));
                         }
                     } else {
