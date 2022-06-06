@@ -2,6 +2,7 @@ package morevanillaitems.distriful5061.github.com.morevanillaitems;
 
 
 
+import de.tr7zw.nbtapi.NBTEntity;
 import de.tr7zw.nbtapi.NBTItem;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -9,6 +10,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -21,9 +23,11 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.projectiles.ProjectileSource;
 
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.UUID;
 
 public class lis implements Listener{
     /*
@@ -33,8 +37,9 @@ public class lis implements Listener{
         arrowfirerate -矢が打てない時間(Tick)。これがあると左クリックで矢が撃てるようになります
         power -パワー(1Lv=0.5)
         flame -ただ燃えるだけ(1Lv=40Tick)
+        damage -基礎ダメージ
 
-        /give @s bow{noreducearrowsprobability:1,arrowfirerate:1,power:1,flame:1}
+        /give @s bow{noreducearrowsprobability:1,arrowfirerate:1,power:1,flame:1,damage:2}
      */
     HashMap<Player, Boolean> BowLeftClicked = new HashMap<>();
 
@@ -51,6 +56,7 @@ public class lis implements Listener{
     @EventHandler
     public void onPlayerUsedBow(EntityShootBowEvent e){
         if(e.getProjectile().getType() == EntityType.ARROW){
+            //Bukkit.broadcastMessage(e.getEntity().getName());
             NBTItem playerbow = new NBTItem(Objects.requireNonNull(e.getBow()));
             if(playerbow.hasKey("noreducearrowsprobability")){
                 if(Math.ceil(Math.random() * 100) < playerbow.getInteger("noreducearrowsprobability")){
@@ -61,21 +67,32 @@ public class lis implements Listener{
                 e.getProjectile().setFireTicks(40 * playerbow.getInteger("flame"));
                 e.getProjectile().setVisualFire(true);
             }
+            NBTEntity arrow = new NBTEntity(e.getProjectile());
+            double nbt_damage = 2;
+            if(playerbow.hasKey("damage")){
+                nbt_damage = playerbow.getInteger("damage");
+            }
+            int nbt_power = 0;
+            if(playerbow.hasKey("power")){
+                nbt_power = playerbow.getInteger("power");
+            }
+
+            arrow.setDouble("damage",nbt_damage + (nbt_power * 0.5));
         }
     }
 
     @EventHandler
     public void onHitArrow(EntityDamageByEntityEvent e){
-        ///*
-        if(e.getCause().equals(EntityDamageEvent.DamageCause.PROJECTILE)) {
+        if(e.getCause().equals(EntityDamageEvent.DamageCause.PROJECTILE) && e.getDamager().getType() == EntityType.ARROW) {
+            ///*
             Bukkit.broadcastMessage(e.getEntity().getName() + ":" + e.getDamage() + ":" + e.getEntity().getFireTicks() + ":" + e.getDamager().getFireTicks());
             e.getEntity().setFireTicks(e.getDamager().getFireTicks());
+            //*/
         }
-        //*/
     }
 
     @EventHandler
-    public void onArrowHitBlocks(ProjectileHitEvent e){
+    public void onArrowHitBlocksOrEntity(ProjectileHitEvent e){
         if(e.getEntity().getType() == EntityType.ARROW && e.getHitBlock() != null && e.getHitEntity() == null){
             e.getEntity().remove();
         }
@@ -105,13 +122,27 @@ public class lis implements Listener{
                 if(playeritemnbt.hasKey("power")){
                     nbt_power = playeritemnbt.getInteger("power");
                 }
+                int nbt_damage = 2;
+                if(playeritemnbt.hasKey("damage")) {
+                    nbt_damage = playeritemnbt.getInteger("damage");
+                }
                 Arrow arrow = e.getPlayer().launchProjectile(Arrow.class);
                 //Bukkit.broadcastMessage(String.valueOf(arrow.getDamage()));
                 //int enchant_power = iteminmainhand.getEnchantmentLevel(Enchantment.ARROW_DAMAGE);
-                arrow.setDamage(2.0 + (nbt_power * 0.5));
+                arrow.setDamage(nbt_damage + (nbt_power * 0.5));
                 if(playeritemnbt.hasKey("flame")){
                     arrow.setFireTicks(40 * playeritemnbt.getInteger("flame"));
                     arrow.setVisualFire(true);
+                }
+                Player p = e.getPlayer();
+                if(p.getHealth() != p.getMaxHealth()){
+                    double damagecnt = nbt_damage + (nbt_power * 0.5);
+                    if(p.getHealth()+damagecnt > p.getMaxHealth()){
+                        double sabun = damagecnt - p.getMaxHealth();
+                        p.setHealth(p.getHealth() + sabun);
+                    } else {
+                        p.setHealth(p.getHealth() + damagecnt);
+                    }
                 }
                 //Bukkit.broadcastMessage(String.valueOf(2.0 + (a * 1.5)));
                 BowLeftClicked.replace(e.getPlayer(),true);
