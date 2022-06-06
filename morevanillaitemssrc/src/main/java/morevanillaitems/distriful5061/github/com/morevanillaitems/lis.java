@@ -80,7 +80,7 @@ public class lis implements Listener{
                 nbt_power = playerbow.getInteger("power");
             }
 
-            arrow.setDouble("damage",nbt_damage + (nbt_power * 0.5));
+            arrow.setDouble("damage",nbt_damage + nbt_power);
 
             if(e.getEntity().getType() == EntityType.PLAYER) {
                 int nbt_lifesteal = 0;//nbtarrow系の処理
@@ -155,7 +155,7 @@ public class lis implements Listener{
                     nbt_damage = playeritemnbt.getDouble("damage");
                 }
 
-                arrow.setDamage(nbt_damage + (nbt_power * 0.5));//パワーレベル 1Lv=0.5ダメージ
+                arrow.setDamage(nbt_damage + nbt_power);//パワーレベル 1Lv=0.5ダメージ
                 if(playeritemnbt.hasKey("flame")){
                     arrow.setFireTicks(40 * playeritemnbt.getInteger("flame"));//2秒(40Tick) * flameレベル
                     arrow.setVisualFire(true);
@@ -204,7 +204,7 @@ public class lis implements Listener{
                     nbt_damage = playeritemnbt.getDouble("damage");
                 }
 
-                arrow.setDamage(nbt_damage + (nbt_power * 0.5));//パワーレベル 1Lv=0.5ダメージ
+                arrow.setDamage(nbt_damage + nbt_power);//パワーレベル 1Lv=0.5ダメージ
                 if(playeritemnbt.hasKey("flame")){
                     arrow.setFireTicks(40 * playeritemnbt.getInteger("flame"));//2秒(40Tick) * flameレベル
                     arrow.setVisualFire(true);
