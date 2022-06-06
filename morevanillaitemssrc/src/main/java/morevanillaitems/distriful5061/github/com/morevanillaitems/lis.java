@@ -78,6 +78,10 @@ public class lis implements Listener{
             }
 
             arrow.setDouble("damage",nbt_damage + (nbt_power * 0.5));
+
+            if(e.getEntity().getType() == EntityType.PLAYER) {
+                // do anything
+            }
         }
     }
 
