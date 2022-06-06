@@ -134,16 +134,6 @@ public class lis implements Listener{
                     arrow.setFireTicks(40 * playeritemnbt.getInteger("flame"));
                     arrow.setVisualFire(true);
                 }
-                Player p = e.getPlayer();
-                if(p.getHealth() != p.getMaxHealth()){
-                    double damagecnt = nbt_damage + (nbt_power * 0.5);
-                    if(p.getHealth()+damagecnt > p.getMaxHealth()){
-                        double sabun = damagecnt - p.getMaxHealth();
-                        p.setHealth(p.getHealth() + sabun);
-                    } else {
-                        p.setHealth(p.getHealth() + damagecnt);
-                    }
-                }
                 //Bukkit.broadcastMessage(String.valueOf(2.0 + (a * 1.5)));
                 BowLeftClicked.replace(e.getPlayer(),true);
                 Bukkit.getScheduler().runTaskLater(Morevanillaitems.getPlugin(), () -> {
