@@ -81,7 +81,7 @@ public final class Morevanillaitems extends JavaPlugin {
 
     public static void CraftdisplayMenu(Player player){
         Menu menu = ChestMenu.builder(5)
-                .title("Craft")
+                .title("§0Craft")
                 .redraw(true)
                 .build();
         Mask mask = BinaryMask.builder(menu)
