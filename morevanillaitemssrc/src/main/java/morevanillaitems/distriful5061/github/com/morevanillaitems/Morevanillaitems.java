@@ -22,6 +22,10 @@ import java.util.List;
 
 public final class Morevanillaitems extends JavaPlugin {
     private static Morevanillaitems plugin;
+    /*
+    * Recipes
+    */
+    public static Material[] BowRecipe;
 
 
     public static Morevanillaitems getPlugin(){
@@ -33,9 +37,7 @@ public final class Morevanillaitems extends JavaPlugin {
     }
 
     public static void CraftingRecipes(Material[] items, Slot resultslot){
-        if (Arrays.equals(new Material[]{Material.AIR, Material.STICK, Material.AIR,
-                Material.AIR, Material.STICK, Material.AIR, Material.AIR,
-                Material.AIR, Material.STICK, Material.AIR}, items)) {
+        if (Arrays.equals(BowRecipe, items)) {
             resultslot.setItem(new ItemStack(Material.BOW,1));
             return;
         }
@@ -134,20 +136,47 @@ public final class Morevanillaitems extends JavaPlugin {
             } catch(IllegalArgumentException | NullPointerException ignored){}
         });
         for(int k = 0;k < 3;k++) {
-            menu.getSlot(k + 11).setClickHandler(Morevanillaitems::recipecheck);
+            menu.getSlot(k+11).setClickHandler((p, info) -> {
+                Bukkit.broadcastMessage(p.getName() + ":" + info.getClickedSlot().getItem(p).getType().name());
+            });
         }
         for(int k = 0;k < 3;k++) {
-            menu.getSlot(k + 20).setClickHandler(Morevanillaitems::recipecheck);
+            menu.getSlot(k+20).setClickHandler((p, info) -> {
+                Bukkit.broadcastMessage(p.getName() + ":" + info.getClickedSlot().getItem(p).getType().name());
+            });
         }
         for(int k = 0;k < 3;k++) {
-            menu.getSlot(k + 29).setClickHandler(Morevanillaitems::recipecheck);
+            menu.getSlot(k+29).setClickHandler((p, info) -> {
+                Bukkit.broadcastMessage(p.getName() + ":" + info.getClickedSlot().getItem(p).getType().name());
+            });
         }
         menu.setCloseHandler((p, menu1) -> {
-            try {
-                ItemStack a = menu1.getSlot(11).getItem(p);
-                player.getInventory().addItem(a);
-            } catch (IllegalArgumentException | NullPointerException ignored) {
-
+            int offset = 11;
+            for(int i=0;i<3;i++){
+                try{
+                    ItemStack item = menu1.getSlot(i+offset).getItem(p);
+                    p.getInventory().addItem(item);
+                } catch(IllegalArgumentException | NullPointerException ignored){
+                    Bukkit.broadcastMessage("illegalarg");
+                }
+            }
+            offset = 20;
+            for(int i=0;i<3;i++){
+                try{
+                    ItemStack item = menu1.getSlot(i+offset).getItem(p);
+                    p.getInventory().addItem(item);
+                } catch(IllegalArgumentException | NullPointerException ignored){
+                    Bukkit.broadcastMessage("illegalarg");
+                }
+            }
+            offset = 29;
+            for(int i=0;i<3;i++){
+                try{
+                    ItemStack item = menu1.getSlot(i+offset).getItem(p);
+                    p.getInventory().addItem(item);
+                } catch(IllegalArgumentException | NullPointerException ignored){
+                    Bukkit.broadcastMessage("illegalarg");
+                }
             }
         });
         menu.open(player);
@@ -168,6 +197,14 @@ public final class Morevanillaitems extends JavaPlugin {
             Bukkit.getPluginCommand(commandname).setExecutor(new CommandClass());
         }
         NBTInjector.inject();
+
+        Material AIR = Material.AIR;
+
+        Material[] bowrecipe = new Material[9];
+        bowrecipe[0] = AIR; bowrecipe[1] = Material.STICK; bowrecipe[2] = AIR;
+        bowrecipe[3] = AIR; bowrecipe[4] = Material.STICK; bowrecipe[5] = AIR;
+        bowrecipe[6] = AIR; bowrecipe[7] = Material.STICK; bowrecipe[8] = AIR;
+        BowRecipe = bowrecipe;
     }
 
     @Override
