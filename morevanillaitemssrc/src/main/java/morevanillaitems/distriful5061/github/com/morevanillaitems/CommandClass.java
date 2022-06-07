@@ -20,7 +20,7 @@ public class CommandClass implements CommandExecutor {
         if(!(commandlist.contains(commandname))) return false;
         switch(commandname.toLowerCase()){
             case "craft":
-                Morevanillaitems.displayMenu((Player) sender);
+                Morevanillaitems.CraftdisplayMenu((Player) sender);
                 return true;
             case "enderchest":
                 return true;

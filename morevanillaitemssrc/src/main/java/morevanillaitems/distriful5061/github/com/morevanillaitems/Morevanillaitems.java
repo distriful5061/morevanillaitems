@@ -27,10 +27,11 @@ public final class Morevanillaitems extends JavaPlugin {
                 .build();
     }
 
-    public static void displayMenu(Player player){
-        Menu menu = createMenu("test",4);
+    public static void CraftdisplayMenu(Player player){
+        Menu menu = createMenu("Craft",5);
         menu.setCloseHandler((p, menu1) -> {
             ItemStack a = menu1.getSlot(1).getItem(p);
+            player.getInventory().addItem(a);
         });
         menu.open(player);
     }
