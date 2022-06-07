@@ -7,6 +7,7 @@ import de.tr7zw.nbtapi.NBTItem;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.*;
@@ -96,18 +97,33 @@ public class lis implements Listener{
         if(e.getCause().equals(EntityDamageEvent.DamageCause.PROJECTILE) && e.getDamager().getType() == EntityType.ARROW) {
             UUID arrowuuid = e.getDamager().getUniqueId();
             ///* For Debug
+            Bukkit.broadcastMessage("--------");
             Bukkit.broadcastMessage(e.getEntity().getName() + ":" + e.getDamage() + ":" + e.getEntity().getFireTicks() + ":" + e.getDamager().getFireTicks());
             e.getEntity().setFireTicks(e.getDamager().getFireTicks());
             Bukkit.broadcastMessage("Ok");
             Bukkit.broadcastMessage(String.valueOf(ArrowShooter.containsKey(arrowuuid)));
             //*/
-            if(!(ArrowShooter.containsKey(arrowuuid))) return;
+            ArrowShooter.get(arrowuuid).playSound(
+                    ArrowShooter.get(arrowuuid),
+                    Sound.ENTITY_PLAYER_LEVELUP,
+                    1,
+                    1
+            );
+            if(!(ArrowShooter.containsKey(arrowuuid))) {
+                ArrowShooter.remove(arrowuuid);
+                LifeStealLevel.remove(arrowuuid);
+                return;
+            }
 
             Player p = ArrowShooter.get(arrowuuid);
             double arrdmg = e.getDamage();
             double lifesteallvl = LifeStealLevel.get(arrowuuid);
             double damagecnt = arrdmg * (lifesteallvl / 100);
-            Bukkit.broadcastMessage("damagecnt:"+damagecnt+":"+lifesteallvl+":"+arrdmg+":"+lifesteallvl / 100);// For Debug
+
+            ///* For Debug
+            Bukkit.broadcastMessage("damagecnt:"+damagecnt+":"+lifesteallvl+":"+arrdmg+":"+lifesteallvl / 100);
+            Bukkit.broadcastMessage("--------");
+            //*/
             AttributeInstance urself = Objects.requireNonNull(p).getAttribute(Attribute.valueOf("GENERIC_MAX_HEALTH"));
             double playermaxlife = Objects.requireNonNull(urself).getValue();
             p.setHealth(Math.min(p.getHealth() + damagecnt, playermaxlife));
