@@ -137,24 +137,26 @@ public final class Morevanillaitems extends JavaPlugin {
         });
         for(int k = 0;k < 3;k++) {
             menu.getSlot(k+11).setClickHandler((p, info) -> {
-                Bukkit.broadcastMessage(p.getName() + ":" + info.getClickedSlot().getItem(p).getType().name());
+                Bukkit.broadcastMessage(p.getName() + ":" + p.getItemOnCursor().getType().name());
             });
         }
         for(int k = 0;k < 3;k++) {
             menu.getSlot(k+20).setClickHandler((p, info) -> {
-                Bukkit.broadcastMessage(p.getName() + ":" + info.getClickedSlot().getItem(p).getType().name());
+                Bukkit.broadcastMessage(p.getName() + ":" + p.getItemOnCursor().getType().name());
             });
         }
         for(int k = 0;k < 3;k++) {
             menu.getSlot(k+29).setClickHandler((p, info) -> {
-                Bukkit.broadcastMessage(p.getName() + ":" + info.getClickedSlot().getItem(p).getType().name());
+                Bukkit.broadcastMessage(p.getName() + ":" + p.getItemOnCursor().getType().name());
             });
         }
         menu.setCloseHandler((p, menu1) -> {
             int offset = 11;
+            Player pl = Bukkit.getPlayer(p.getName());
             for(int i=0;i<3;i++){
                 try{
-                    ItemStack item = menu1.getSlot(i+offset).getItem(p);
+                    ItemStack item = menu1.getSlot(i+offset).getItem(pl);
+                    Bukkit.broadcastMessage(String.valueOf(item == null));
                     p.getInventory().addItem(item);
                 } catch(IllegalArgumentException | NullPointerException ignored){
                     Bukkit.broadcastMessage("illegalarg");
@@ -163,7 +165,8 @@ public final class Morevanillaitems extends JavaPlugin {
             offset = 20;
             for(int i=0;i<3;i++){
                 try{
-                    ItemStack item = menu1.getSlot(i+offset).getItem(p);
+                    ItemStack item = menu1.getSlot(i+offset).getItem(pl);
+                    Bukkit.broadcastMessage(String.valueOf(item == null));
                     p.getInventory().addItem(item);
                 } catch(IllegalArgumentException | NullPointerException ignored){
                     Bukkit.broadcastMessage("illegalarg");
@@ -172,7 +175,8 @@ public final class Morevanillaitems extends JavaPlugin {
             offset = 29;
             for(int i=0;i<3;i++){
                 try{
-                    ItemStack item = menu1.getSlot(i+offset).getItem(p);
+                    ItemStack item = menu1.getSlot(i+offset).getItem(pl);
+                    Bukkit.broadcastMessage(String.valueOf(item == null));
                     p.getInventory().addItem(item);
                 } catch(IllegalArgumentException | NullPointerException ignored){
                     Bukkit.broadcastMessage("illegalarg");

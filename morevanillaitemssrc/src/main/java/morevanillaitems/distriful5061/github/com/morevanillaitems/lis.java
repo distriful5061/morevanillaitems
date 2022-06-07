@@ -103,12 +103,6 @@ public class lis implements Listener{
             Bukkit.broadcastMessage("Ok");
             Bukkit.broadcastMessage(String.valueOf(ArrowShooter.containsKey(arrowuuid)));
             //*/
-            ArrowShooter.get(arrowuuid).playSound(
-                    ArrowShooter.get(arrowuuid),
-                    Sound.ENTITY_PLAYER_LEVELUP,
-                    1,
-                    1
-            );
             if(!(ArrowShooter.containsKey(arrowuuid))) {
                 ArrowShooter.remove(arrowuuid);
                 LifeStealLevel.remove(arrowuuid);
