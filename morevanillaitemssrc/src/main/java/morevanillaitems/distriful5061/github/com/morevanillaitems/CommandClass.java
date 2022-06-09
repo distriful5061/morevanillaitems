@@ -19,9 +19,6 @@ public class CommandClass implements CommandExecutor {
         String commandname = command.getName();
         if(!(commandlist.contains(commandname))) return false;
         switch(commandname.toLowerCase()){
-            case "craft":
-                Morevanillaitems.CraftdisplayMenu((Player) sender);
-                return true;
             case "enderchest":
                 return true;
             case "hp":

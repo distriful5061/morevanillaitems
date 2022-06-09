@@ -1,31 +1,20 @@
 package morevanillaitems.distriful5061.github.com.morevanillaitems;
 
 import de.tr7zw.nbtinjector.NBTInjector;
-import org.apache.commons.lang.ObjectUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryAction;
+import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.ipvp.canvas.*;
-import org.ipvp.canvas.mask.BinaryMask;
-import org.ipvp.canvas.mask.Mask;
-import org.ipvp.canvas.paginate.PaginatedMenuBuilder;
-import org.ipvp.canvas.slot.ClickOptions;
-import org.ipvp.canvas.slot.Slot;
-import org.ipvp.canvas.type.ChestMenu;
+import org.ipvp.canvas.MenuFunctionListener;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.Objects;
 
 public final class Morevanillaitems extends JavaPlugin {
     private static Morevanillaitems plugin;
-    /*
-    * Recipes
-    */
-    public static Material[] BowRecipe;
 
 
     public static Morevanillaitems getPlugin(){
@@ -36,6 +25,7 @@ public final class Morevanillaitems extends JavaPlugin {
         getLogger().info(content);
     }
 
+    /*
     public static void CraftingRecipes(Material[] items, Slot resultslot){
         if (Arrays.equals(BowRecipe, items)) {
             resultslot.setItem(new ItemStack(Material.BOW,1));
@@ -92,7 +82,6 @@ public final class Morevanillaitems extends JavaPlugin {
                 .pattern("110001111")
                 .pattern("111111111")
                 .build();
-        /* For Debug
         Mask mask2 = BinaryMask.builder(menu)
                 .item(new ItemStack(Material.WHITE_STAINED_GLASS_PANE))
                 .pattern("111111111")
@@ -101,7 +90,6 @@ public final class Morevanillaitems extends JavaPlugin {
                 .pattern("111111111")
                 .pattern("111111111")
                 .build();
-        */
         mask.apply(menu);
         ClickOptions options = ClickOptions.builder()
                 .allow(ClickType.LEFT, ClickType.RIGHT)
@@ -185,7 +173,18 @@ public final class Morevanillaitems extends JavaPlugin {
         });
         menu.open(player);
     }
+    */
 
+    public static ShapedRecipe addRecipe(Material itemmaterial,int amount,String itemname,String namespacekey,String shape1,String shape2,String shape3){
+        ItemStack item = new ItemStack(itemmaterial,amount);
+        ItemMeta meta = item.getItemMeta();
+        Objects.requireNonNull(meta).setDisplayName(itemname);
+        item.setItemMeta(meta);
+        NamespacedKey key = new NamespacedKey(Morevanillaitems.getPlugin(), namespacekey);
+        ShapedRecipe recipe = new ShapedRecipe(key,item);
+        recipe.shape(shape1,shape2,shape3);
+        return recipe;
+    }
     @Override
     public void onEnable() {
         // Plugin startup logic
@@ -193,22 +192,25 @@ public final class Morevanillaitems extends JavaPlugin {
         loggerinfo("Minigame plugin booting...");
         Bukkit.getServer().getPluginManager().registerEvents(new lis(), this);
         Bukkit.getPluginManager().registerEvents(new MenuFunctionListener(), this);
-        CommandClass.commandlist.add("craft");
         CommandClass.commandlist.add("enderchest");
         CommandClass.commandlist.add("hp");
         CommandClass.commandlist.add("test");
         for(String commandname : CommandClass.commandlist){
-            Bukkit.getPluginCommand(commandname).setExecutor(new CommandClass());
+            Objects.requireNonNull(Bukkit.getPluginCommand(commandname)).setExecutor(new CommandClass());
         }
         NBTInjector.inject();
 
-        Material AIR = Material.AIR;
-
-        Material[] bowrecipe = new Material[9];
-        bowrecipe[0] = AIR; bowrecipe[1] = Material.STICK; bowrecipe[2] = AIR;
-        bowrecipe[3] = AIR; bowrecipe[4] = Material.STICK; bowrecipe[5] = AIR;
-        bowrecipe[6] = AIR; bowrecipe[7] = Material.STICK; bowrecipe[8] = AIR;
-        BowRecipe = bowrecipe;
+        ShapedRecipe recipe = addRecipe(
+                Material.DIAMOND_SWORD,
+                1,
+                ChatColor.GREEN+"Emerald Sword",
+                "Emerald Sword",
+                " E ",
+                " E ",
+                " S ");
+        recipe.setIngredient('E',Material.EMERALD);
+        recipe.setIngredient('S',Material.STICK);
+        Bukkit.addRecipe(recipe);
     }
 
     @Override
