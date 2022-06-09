@@ -2,7 +2,6 @@ package morevanillaitems.distriful5061.github.com.morevanillaitems;
 
 import de.tr7zw.nbtinjector.NBTInjector;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -11,6 +10,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.ipvp.canvas.MenuFunctionListener;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public final class Morevanillaitems extends JavaPlugin {
@@ -175,10 +176,12 @@ public final class Morevanillaitems extends JavaPlugin {
     }
     */
 
-    public static ShapedRecipe addRecipe(Material itemmaterial,int amount,String itemname,String namespacekey,String shape1,String shape2,String shape3){
+    public static ShapedRecipe addRecipe(Material itemmaterial, int amount, String itemname, List<String> itemlore, boolean unbreakable, String namespacekey, String shape1, String shape2, String shape3){
         ItemStack item = new ItemStack(itemmaterial,amount);
         ItemMeta meta = item.getItemMeta();
         Objects.requireNonNull(meta).setDisplayName(itemname);
+        meta.setLore(itemlore);
+        meta.setUnbreakable(unbreakable);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey(Morevanillaitems.getPlugin(), namespacekey);
         ShapedRecipe recipe = new ShapedRecipe(key,item);
@@ -200,10 +203,17 @@ public final class Morevanillaitems extends JavaPlugin {
         }
         NBTInjector.inject();
 
-        ShapedRecipe recipe = addRecipe(
+        ShapedRecipe recipe;
+        List<String> itemlore = new ArrayList<>();
+
+
+        itemlore.add("an Normal emerald sword");
+        recipe = addRecipe(
                 Material.DIAMOND_SWORD,
                 1,
-                ChatColor.GREEN+"Emerald Sword",
+                "§aEmerald Sword",
+                itemlore,
+                false,
                 "Emerald Sword",
                 " E ",
                 " E ",
@@ -211,6 +221,8 @@ public final class Morevanillaitems extends JavaPlugin {
         recipe.setIngredient('E',Material.EMERALD);
         recipe.setIngredient('S',Material.STICK);
         Bukkit.addRecipe(recipe);
+        itemlore.clear();
+
     }
 
     @Override

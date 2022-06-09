@@ -4,10 +4,7 @@ package morevanillaitems.distriful5061.github.com.morevanillaitems;
 
 import de.tr7zw.nbtapi.NBTEntity;
 import de.tr7zw.nbtapi.NBTItem;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.*;
@@ -18,6 +15,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -53,6 +51,21 @@ public class lis implements Listener{
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent e){
         BowLeftClicked.remove(e.getPlayer());
+    }
+
+    @EventHandler
+    public void onCraftItem(CraftItemEvent e){
+        switch(Objects.requireNonNull(Objects.requireNonNull(e.getInventory().getResult()).getItemMeta()).getDisplayName()){
+            case "§aEmerald Sword":
+                ItemStack resultitem = e.getInventory().getResult();
+                NBTItem item = new NBTItem(resultitem);
+                if(resultitem.getType() == Material.DIAMOND_SWORD){
+                    item.setInteger("emsw",1);
+                }
+                break;
+            default:
+                break;
+        }
     }
 
     @EventHandler
@@ -234,6 +247,9 @@ public class lis implements Listener{
                 Bukkit.getScheduler().runTaskLater(Morevanillaitems.getPlugin(), () -> {
                     BowLeftClicked.replace(e.getPlayer(),false);
                 }, playeritemnbt.getInteger("arrowfirerate"));
+                return;
+            } else if(playeritemmaterial == Material.BOW && playeritemnbt.hasKey("emsw")){
+                Bukkit.broadcastMessage("emsw is valid");
                 return;
             }
         }
