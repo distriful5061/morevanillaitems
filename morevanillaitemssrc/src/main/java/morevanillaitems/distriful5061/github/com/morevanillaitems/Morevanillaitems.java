@@ -1,5 +1,6 @@
 package morevanillaitems.distriful5061.github.com.morevanillaitems;
 
+import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtinjector.NBTInjector;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -176,6 +177,17 @@ public final class Morevanillaitems extends JavaPlugin {
     }
     */
 
+    public static void checkItemNBT(ItemStack item){
+        NBTItem itemA = new NBTItem(item);
+        switch(Objects.requireNonNull(item.getItemMeta()).getDisplayName()){
+            case "§aEmerald Sword":
+                itemA.setInteger("emsw",1);
+                break;
+            case default:
+                break;
+        }
+    }
+
     public static ShapedRecipe addRecipe(Material itemmaterial, int amount, String itemname, List<String> itemlore, boolean unbreakable, String namespacekey, String shape1, String shape2, String shape3){
         ItemStack item = new ItemStack(itemmaterial,amount);
         ItemMeta meta = item.getItemMeta();
@@ -203,6 +215,7 @@ public final class Morevanillaitems extends JavaPlugin {
         }
         NBTInjector.inject();
 
+        /*
         ShapedRecipe recipe;
         List<String> itemlore = new ArrayList<>();
 
@@ -214,7 +227,7 @@ public final class Morevanillaitems extends JavaPlugin {
                 "§aEmerald Sword",
                 itemlore,
                 false,
-                "Emerald Sword",
+                "EmeraldSword",
                 " E ",
                 " E ",
                 " S ");
@@ -222,6 +235,8 @@ public final class Morevanillaitems extends JavaPlugin {
         recipe.setIngredient('S',Material.STICK);
         Bukkit.addRecipe(recipe);
         itemlore.clear();
+
+         */
 
     }
 

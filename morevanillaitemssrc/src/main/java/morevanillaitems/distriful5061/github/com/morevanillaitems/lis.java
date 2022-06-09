@@ -1,7 +1,6 @@
 package morevanillaitems.distriful5061.github.com.morevanillaitems;
 
 
-
 import de.tr7zw.nbtapi.NBTEntity;
 import de.tr7zw.nbtapi.NBTItem;
 import org.bukkit.*;
@@ -51,21 +50,6 @@ public class lis implements Listener{
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent e){
         BowLeftClicked.remove(e.getPlayer());
-    }
-
-    @EventHandler
-    public void onCraftItem(CraftItemEvent e){
-        switch(Objects.requireNonNull(Objects.requireNonNull(e.getInventory().getResult()).getItemMeta()).getDisplayName()){
-            case "§aEmerald Sword":
-                ItemStack resultitem = e.getInventory().getResult();
-                NBTItem item = new NBTItem(resultitem);
-                if(resultitem.getType() == Material.DIAMOND_SWORD){
-                    item.setInteger("emsw",1);
-                }
-                break;
-            default:
-                break;
-        }
     }
 
     @EventHandler
@@ -146,10 +130,27 @@ public class lis implements Listener{
     }
 
     @EventHandler
+    public void onCraftItem(CraftItemEvent e){
+        ItemStack resultitem = e.getInventory().getResult();
+        NBTItem item = new NBTItem(Objects.requireNonNull(resultitem));
+        switch(Objects.requireNonNull(Objects.requireNonNull(e.getInventory().getResult()).getItemMeta()).getDisplayName()){
+            case "§aEmerald Sword":
+                if(resultitem.getType() == Material.DIAMOND_SWORD){
+                    item.setInteger("emsw",1);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    @EventHandler
     public void onPlayerInterracted(PlayerInteractEvent e){
         PlayerInventory playerinv = e.getPlayer().getInventory();
         ItemStack iteminmainhand = playerinv.getItemInMainHand();
         Material playeritemmaterial = iteminmainhand.getType();
+
+        //Morevanillaitems.checkItemNBT(iteminmainhand);
 
         if(playeritemmaterial == Material.AIR) return;
         NBTItem playeritemnbt = new NBTItem(iteminmainhand);
@@ -248,7 +249,7 @@ public class lis implements Listener{
                     BowLeftClicked.replace(e.getPlayer(),false);
                 }, playeritemnbt.getInteger("arrowfirerate"));
                 return;
-            } else if(playeritemmaterial == Material.BOW && playeritemnbt.hasKey("emsw")){
+            } else if(playeritemmaterial == Material.DIAMOND_SWORD && playeritemnbt.hasKey("emsw")){
                 Bukkit.broadcastMessage("emsw is valid");
                 return;
             }
