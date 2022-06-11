@@ -10,8 +10,16 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
+import java.util.Objects;
+
 public class OtherEventListener implements Listener {
-    private final Morevanillaitems morevanillaitems = new Morevanillaitems();
+    public void checkItemNBT(ItemStack item){
+        NBTItem itemA = new NBTItem(item);
+        switch(Objects.requireNonNull(item.getItemMeta()).getDisplayName()) {
+            case default:
+                break;
+        }
+    }
 
     @EventHandler
     public void onPlayerInterracted(PlayerInteractEvent e){//Test
@@ -19,7 +27,7 @@ public class OtherEventListener implements Listener {
         ItemStack iteminmainhand = playerinv.getItemInMainHand();
         Material playeritemmaterial = iteminmainhand.getType();
 
-        morevanillaitems.checkItemNBT(iteminmainhand);
+        checkItemNBT(iteminmainhand);
 
         if(playeritemmaterial == Material.AIR) return;
 

@@ -47,9 +47,19 @@ public class BowEventListener implements Listener{
         BowLeftClicked.remove(p);
     }
 
+    public void checkItemNBT(ItemStack item){
+        NBTItem itemA = new NBTItem(item);
+        switch(Objects.requireNonNull(item.getItemMeta()).getDisplayName()) {
+            case default:
+                break;
+        }
+    }
+
     @EventHandler
     public void onPlayerUsedBow(EntityShootBowEvent e){
         if(e.getProjectile().getType() == EntityType.ARROW){
+            checkItemNBT(e.getBow());
+
             //Bukkit.broadcastMessage(e.getEntity().getName());
             NBTItem playerbow = new NBTItem(Objects.requireNonNull(e.getBow()));
             if(playerbow.hasKey("noreducearrowsprobability")){
@@ -94,11 +104,7 @@ public class BowEventListener implements Listener{
             Bukkit.broadcastMessage("Ok");
             Bukkit.broadcastMessage(String.valueOf(ArrowShooter.containsKey(arrowuuid)));
             //*/
-            if(!(ArrowShooter.containsKey(arrowuuid))) {
-                ArrowShooter.remove(arrowuuid);
-                LifeStealLevel.remove(arrowuuid);
-                return;
-            }
+            if(!(ArrowShooter.containsKey(arrowuuid))) return;
 
             Player p = ArrowShooter.get(arrowuuid);
             double arrdmg = e.getDamage();
@@ -118,24 +124,24 @@ public class BowEventListener implements Listener{
     }
 
     @EventHandler
-    public void onArrowHitBlocksOrEntity(ProjectileHitEvent e){
+    public void onArrowHitBlocks(ProjectileHitEvent e){
         if(e.getEntity().getType() == EntityType.ARROW && e.getHitBlock() != null && e.getHitEntity() == null){
             e.getEntity().remove();
         }
     }
 
     @EventHandler
-    public void onPlayerInterracted(PlayerInteractEvent e){
+    public void onPlayerInterracted(PlayerInteractEvent e){//処理が終わった後のreturn;は保険なので気にしないでください。
         PlayerInventory playerinv = e.getPlayer().getInventory();
         ItemStack iteminmainhand = playerinv.getItemInMainHand();
         Material playeritemmaterial = iteminmainhand.getType();
 
-        //Morevanillaitems.checkItemNBT(iteminmainhand);
+        checkItemNBT(iteminmainhand);
 
-        if(playeritemmaterial == Material.AIR) return;
+        if(playeritemmaterial != Material.BOW) return;
         NBTItem playeritemnbt = new NBTItem(iteminmainhand);
         if(e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK){
-            if(playeritemmaterial == Material.BOW && playeritemnbt.hasKey("arrowfirerate")) {
+            if(playeritemnbt.hasKey("arrowfirerate")) {
                 e.setCancelled(true);
                 if(BowLeftClicked.get(e.getPlayer())) return;
                 if( !(playerinv.contains(Material.ARROW)) && e.getPlayer().getGameMode() != GameMode.CREATIVE) return;
@@ -183,7 +189,7 @@ public class BowEventListener implements Listener{
                 return;
             }
         } else if(e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK){
-            if(playeritemmaterial == Material.BOW && playeritemnbt.hasKey("arrowfirerate")) {
+            if(playeritemnbt.hasKey("arrowfirerate")) {
                 e.setCancelled(true);
                 if(BowLeftClicked.get(e.getPlayer())) return;
                 if( !(playerinv.contains(Material.ARROW)) && e.getPlayer().getGameMode() != GameMode.CREATIVE) return;

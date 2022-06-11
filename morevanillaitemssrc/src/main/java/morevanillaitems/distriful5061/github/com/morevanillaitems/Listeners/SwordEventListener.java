@@ -9,10 +9,21 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
+import java.util.Objects;
+
 public class SwordEventListener implements Listener{
     /*
     Documents(NBT)
     */
+
+    public void checkItemNBT(ItemStack item){
+        NBTItem itemA = new NBTItem(item);
+        switch(Objects.requireNonNull(item.getItemMeta()).getDisplayName()) {
+            case "§aEmerald Sword":
+                itemA.setInteger("emsw", 1);
+                break;
+        }
+    }
 
     @EventHandler
     public void onPlayerInterracted(PlayerInteractEvent e){
@@ -20,7 +31,7 @@ public class SwordEventListener implements Listener{
         ItemStack iteminmainhand = playerinv.getItemInMainHand();
         Material playeritemmaterial = iteminmainhand.getType();
 
-        //Morevanillaitems.checkItemNBT(iteminmainhand);
+        checkItemNBT(iteminmainhand);
 
         if(playeritemmaterial == Material.AIR) return;
         NBTItem playeritemnbt = new NBTItem(iteminmainhand);
