@@ -184,7 +184,7 @@ public final class Morevanillaitems extends JavaPlugin {
     }
     */
 
-    public static void checkItemNBT(ItemStack item){
+    public void checkItemNBT(ItemStack item){
         NBTItem itemA = new NBTItem(item);
         switch(Objects.requireNonNull(item.getItemMeta()).getDisplayName()) {
             case "§aEmerald Sword":

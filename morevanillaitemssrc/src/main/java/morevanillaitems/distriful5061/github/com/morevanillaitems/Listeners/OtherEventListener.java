@@ -1,6 +1,7 @@
 package morevanillaitems.distriful5061.github.com.morevanillaitems.Listeners;
 
 import de.tr7zw.nbtapi.NBTItem;
+import morevanillaitems.distriful5061.github.com.morevanillaitems.Morevanillaitems;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -10,11 +11,15 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 public class OtherEventListener implements Listener {
+    private final Morevanillaitems morevanillaitems = new Morevanillaitems();
+
     @EventHandler
     public void onPlayerInterracted(PlayerInteractEvent e){//Test
         PlayerInventory playerinv = e.getPlayer().getInventory();
         ItemStack iteminmainhand = playerinv.getItemInMainHand();
         Material playeritemmaterial = iteminmainhand.getType();
+
+        morevanillaitems.checkItemNBT(iteminmainhand);
 
         if(playeritemmaterial == Material.AIR) return;
 

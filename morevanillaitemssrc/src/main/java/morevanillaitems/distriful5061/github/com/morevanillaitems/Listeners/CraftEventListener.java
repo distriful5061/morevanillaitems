@@ -12,6 +12,12 @@ public class CraftEventListener implements Listener{
     @EventHandler
     public void onCraftItem(CraftItemEvent e){
         ItemStack resultitem = e.getInventory().getResult();
+        if(resultitem == null){
+            Bukkit.broadcastMessage("Null");
+            return;
+        }
+        Bukkit.broadcastMessage("N:"+ Objects.requireNonNull(resultitem).getType().name());
+
         NBTItem item = new NBTItem(Objects.requireNonNull(resultitem));
         switch(Objects.requireNonNull(Objects.requireNonNull(e.getInventory().getResult()).getItemMeta()).getDisplayName()){
             case "§aEmerald Sword":
