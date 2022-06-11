@@ -2,9 +2,17 @@ package morevanillaitems.distriful5061.github.com.morevanillaitems;
 
 import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtinjector.NBTInjector;
+
+import morevanillaitems.distriful5061.github.com.morevanillaitems.Listeners.PlayerServerEventListener;
+import morevanillaitems.distriful5061.github.com.morevanillaitems.Listeners.BowEventListener;
+import morevanillaitems.distriful5061.github.com.morevanillaitems.Listeners.CraftEventListener;
+import morevanillaitems.distriful5061.github.com.morevanillaitems.Listeners.OtherEventListener;
+import morevanillaitems.distriful5061.github.com.morevanillaitems.Listeners.SwordEventListener;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.command.Command;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -179,11 +187,9 @@ public final class Morevanillaitems extends JavaPlugin {
 
     public static void checkItemNBT(ItemStack item){
         NBTItem itemA = new NBTItem(item);
-        switch(Objects.requireNonNull(item.getItemMeta()).getDisplayName()){
+        switch(Objects.requireNonNull(item.getItemMeta()).getDisplayName()) {
             case "§aEmerald Sword":
-                itemA.setInteger("emsw",1);
-                break;
-            case default:
+                itemA.setInteger("emsw", 1);
                 break;
         }
     }
@@ -191,6 +197,10 @@ public final class Morevanillaitems extends JavaPlugin {
     public static ShapedRecipe addRecipe(Material itemmaterial, int amount, String itemname, List<String> itemlore, boolean unbreakable, String namespacekey, String shape1, String shape2, String shape3){
         ItemStack item = new ItemStack(itemmaterial,amount);
         ItemMeta meta = item.getItemMeta();
+        if(meta == null){
+            Morevanillaitems logger = new Morevanillaitems();
+            logger.loggerinfo("ItemMeta is null");
+        }
         Objects.requireNonNull(meta).setDisplayName(itemname);
         meta.setLore(itemlore);
         meta.setUnbreakable(unbreakable);
@@ -204,18 +214,25 @@ public final class Morevanillaitems extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
         plugin = this;
-        loggerinfo("Minigame plugin booting...");
-        Bukkit.getServer().getPluginManager().registerEvents(new lis(), this);
+        NBTInjector.inject();
+        loggerinfo("Morevanillaitems plugin booting...");
+        Bukkit.getServer().getPluginManager().registerEvents(new OtherEventListener(), this);
+        Bukkit.getServer().getPluginManager().registerEvents(new BowEventListener(),this);
+        Bukkit.getServer().getPluginManager().registerEvents(new SwordEventListener(), this);
+        Bukkit.getServer().getPluginManager().registerEvents(new CraftEventListener(), this);
+        Bukkit.getServer().getPluginManager().registerEvents(new PlayerServerEventListener(), this);
         Bukkit.getPluginManager().registerEvents(new MenuFunctionListener(), this);
+        loggerinfo("Listener registered");
+
         CommandClass.commandlist.add("enderchest");
         CommandClass.commandlist.add("hp");
         CommandClass.commandlist.add("test");
         for(String commandname : CommandClass.commandlist){
             Objects.requireNonNull(Bukkit.getPluginCommand(commandname)).setExecutor(new CommandClass());
         }
-        NBTInjector.inject();
+        loggerinfo("Command registered");
 
-        /*
+
         ShapedRecipe recipe;
         List<String> itemlore = new ArrayList<>();
 
@@ -236,12 +253,13 @@ public final class Morevanillaitems extends JavaPlugin {
         Bukkit.addRecipe(recipe);
         itemlore.clear();
 
-         */
+        loggerinfo("Recipe registered");
 
+        loggerinfo("All booting process ended.");
     }
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        loggerinfo("Morevanillaitems plugin are disabled...");
     }
 }

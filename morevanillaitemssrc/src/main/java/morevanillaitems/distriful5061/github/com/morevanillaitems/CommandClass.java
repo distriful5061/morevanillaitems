@@ -1,5 +1,6 @@
 package morevanillaitems.distriful5061.github.com.morevanillaitems;
 
+import morevanillaitems.distriful5061.github.com.morevanillaitems.Command.EnderChest;
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -20,7 +21,8 @@ public class CommandClass implements CommandExecutor {
         if(!(commandlist.contains(commandname))) return false;
         switch(commandname.toLowerCase()){
             case "enderchest":
-                return true;
+                EnderChest enderchest = new EnderChest(sender,command,label,args);
+                return enderchest.getResult();
             case "hp":
                 Player p = Bukkit.getPlayer(sender.getName());
                 AttributeInstance urself = Objects.requireNonNull(p).getAttribute(Attribute.valueOf("GENERIC_MAX_HEALTH"));

@@ -85,4 +85,12 @@
             <scope>compile</scope>
         </dependency>
     </dependencies>
+
+    <distributionManagement>
+        <repository>
+            <id>morevanillaitems</id>
+            <name>GitHub OWNER Apache Maven Packages</name>
+            <url>https://github.com/distriful5061/morevanillaitems</url>
+        </repository>
+    </distributionManagement>
 </project>

@@ -1,8 +1,8 @@
-package morevanillaitems.distriful5061.github.com.morevanillaitems;
-
+package morevanillaitems.distriful5061.github.com.morevanillaitems.Listeners;
 
 import de.tr7zw.nbtapi.NBTEntity;
 import de.tr7zw.nbtapi.NBTItem;
+import morevanillaitems.distriful5061.github.com.morevanillaitems.Morevanillaitems;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -14,10 +14,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
-import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
@@ -25,7 +22,7 @@ import java.util.HashMap;
 import java.util.Objects;
 import java.util.UUID;
 
-public class lis implements Listener{
+public class BowEventListener implements Listener{
     /*
     Documents(NBT)
     bow:
@@ -42,14 +39,12 @@ public class lis implements Listener{
     HashMap<UUID, Player> ArrowShooter = new HashMap<>();
     HashMap<UUID, Integer> LifeStealLevel = new HashMap<>();
 
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent e){
-        BowLeftClicked.put(e.getPlayer(),false);
+    public void addBowLeftClicked(Player p){
+        BowLeftClicked.put(p,false);
     }
 
-    @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent e){
-        BowLeftClicked.remove(e.getPlayer());
+    public void removeBowLeftClicked(Player p){
+        BowLeftClicked.remove(p);
     }
 
     @EventHandler
@@ -126,21 +121,6 @@ public class lis implements Listener{
     public void onArrowHitBlocksOrEntity(ProjectileHitEvent e){
         if(e.getEntity().getType() == EntityType.ARROW && e.getHitBlock() != null && e.getHitEntity() == null){
             e.getEntity().remove();
-        }
-    }
-
-    @EventHandler
-    public void onCraftItem(CraftItemEvent e){
-        ItemStack resultitem = e.getInventory().getResult();
-        NBTItem item = new NBTItem(Objects.requireNonNull(resultitem));
-        switch(Objects.requireNonNull(Objects.requireNonNull(e.getInventory().getResult()).getItemMeta()).getDisplayName()){
-            case "§aEmerald Sword":
-                if(resultitem.getType() == Material.DIAMOND_SWORD){
-                    item.setInteger("emsw",1);
-                }
-                break;
-            default:
-                break;
         }
     }
 
@@ -248,9 +228,6 @@ public class lis implements Listener{
                 Bukkit.getScheduler().runTaskLater(Morevanillaitems.getPlugin(), () -> {
                     BowLeftClicked.replace(e.getPlayer(),false);
                 }, playeritemnbt.getInteger("arrowfirerate"));
-                return;
-            } else if(playeritemmaterial == Material.DIAMOND_SWORD && playeritemnbt.hasKey("emsw")){
-                Bukkit.broadcastMessage("emsw is valid");
                 return;
             }
         }
