@@ -3,16 +3,10 @@ package morevanillaitems.distriful5061.github.com.morevanillaitems;
 import morevanillaitems.distriful5061.github.com.morevanillaitems.Command.EnderChest;
 import morevanillaitems.distriful5061.github.com.morevanillaitems.Command.hp;
 import morevanillaitems.distriful5061.github.com.morevanillaitems.Command.test;
-import org.bukkit.Bukkit;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
 import java.util.ArrayList;
-import java.util.Objects;
 
 
 public class CommandClass implements CommandExecutor {
