@@ -22,12 +22,15 @@ public class hp {
         this.label = label;
         this.args = args;
         try {
+            //Do any
             Player p = Bukkit.getPlayer(sender.getName());
             AttributeInstance urself = Objects.requireNonNull(p).getAttribute(Attribute.valueOf("GENERIC_MAX_HEALTH"));
             double playermaxlife = Objects.requireNonNull(urself).getValue();
             sender.sendMessage(playermaxlife + ":" + p.getHealth());
             result = true;
-        } catch()
+        } catch(Exception e){
+            result = false;
+        }
     }
 
     public boolean getResult(){

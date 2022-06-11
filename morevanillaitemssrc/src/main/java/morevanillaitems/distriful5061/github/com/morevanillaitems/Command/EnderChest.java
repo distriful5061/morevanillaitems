@@ -16,7 +16,7 @@ public class EnderChest {
         this.label = label;
         this.args = args;
         try{
-
+            //Do any
             result = true;
         } catch (Exception e){
             result = false;
