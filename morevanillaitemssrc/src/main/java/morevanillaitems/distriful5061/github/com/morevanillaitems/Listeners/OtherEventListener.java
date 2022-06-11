@@ -1,7 +1,6 @@
 package morevanillaitems.distriful5061.github.com.morevanillaitems.Listeners;
 
 import de.tr7zw.nbtapi.NBTItem;
-import morevanillaitems.distriful5061.github.com.morevanillaitems.Morevanillaitems;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

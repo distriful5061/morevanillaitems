@@ -1,8 +1,6 @@
 package morevanillaitems.distriful5061.github.com.morevanillaitems;
 
-import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtinjector.NBTInjector;
-
 import morevanillaitems.distriful5061.github.com.morevanillaitems.Listeners.PlayerServerEventListener;
 import morevanillaitems.distriful5061.github.com.morevanillaitems.Listeners.BowEventListener;
 import morevanillaitems.distriful5061.github.com.morevanillaitems.Listeners.CraftEventListener;

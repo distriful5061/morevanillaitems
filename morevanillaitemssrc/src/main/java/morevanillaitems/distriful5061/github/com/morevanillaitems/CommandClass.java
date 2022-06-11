@@ -2,8 +2,6 @@ package morevanillaitems.distriful5061.github.com.morevanillaitems;
 
 import morevanillaitems.distriful5061.github.com.morevanillaitems.Command.EnderChest;
 import morevanillaitems.distriful5061.github.com.morevanillaitems.Command.hp;
-import morevanillaitems.distriful5061.github.com.morevanillaitems.Command.test;
-import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.command.Command;
