@@ -1,5 +1,6 @@
 package morevanillaitems.distriful5061.github.com.morevanillaitems.Command;
 
+import morevanillaitems.distriful5061.github.com.morevanillaitems.CommandClass;
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -16,6 +17,8 @@ public class hp {
     private final String label;
     private final String[] args;
 
+    private final CommandClass COMMANDCLASS = new CommandClass();
+
     public hp(CommandSender sender, Command command, String label, String[] args) {
         this.sender = sender;
         this.command =  command;
@@ -24,11 +27,10 @@ public class hp {
         try {
             //Do any
             Player p = Bukkit.getPlayer(sender.getName());
-            AttributeInstance urself = Objects.requireNonNull(p).getAttribute(Attribute.valueOf("GENERIC_MAX_HEALTH"));
-            double playermaxlife = Objects.requireNonNull(urself).getValue();
-            sender.sendMessage(playermaxlife + ":" + p.getHealth());
+            double playermaxlife = COMMANDCLASS.getMaxHealth(p);
+            sender.sendMessage(playermaxlife + ":" + Objects.requireNonNull(p).getHealth());
             result = true;
-        } catch(Exception e){
+        } catch(Exception ignored){
             result = false;
         }
     }

@@ -10,8 +10,6 @@ commands:
     description: Enderchest
   hp:
     description: send ur hp
-  test:
-    description: a
 permissions:
   morevanillaitems.*:
     description: astarisuku
@@ -24,7 +22,4 @@ permissions:
     default: true
   morevanillaitems.commands.hp:
     description: hp
-    default: op
-  morevanillaitems.commands.test:
-    description: test
     default: op

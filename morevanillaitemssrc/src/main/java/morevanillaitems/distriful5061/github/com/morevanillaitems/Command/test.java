@@ -2,7 +2,7 @@ package morevanillaitems.distriful5061.github.com.morevanillaitems.Command;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-
+// deprecated
 public class test {
     private boolean result;
     private final CommandSender sender;
@@ -18,7 +18,7 @@ public class test {
         try{
             //Do any
             result = true;
-        } catch (Exception e){
+        } catch (Exception ignored){
             result = false;
         }
     }

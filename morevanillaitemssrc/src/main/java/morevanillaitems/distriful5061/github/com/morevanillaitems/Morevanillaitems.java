@@ -24,6 +24,7 @@ import java.util.Objects;
 
 public final class Morevanillaitems extends JavaPlugin {
     private static Morevanillaitems plugin;
+    private static final Morevanillaitems logger = new Morevanillaitems();;
 
 
     public static Morevanillaitems getPlugin(){
@@ -38,7 +39,6 @@ public final class Morevanillaitems extends JavaPlugin {
         ItemStack item = new ItemStack(itemmaterial,amount);
         ItemMeta meta = item.getItemMeta();
         if(meta == null){
-            Morevanillaitems logger = new Morevanillaitems();
             logger.loggerinfo("ItemMeta is null");
         }
         Objects.requireNonNull(meta).setDisplayName(itemname);
@@ -55,27 +55,25 @@ public final class Morevanillaitems extends JavaPlugin {
         // Plugin startup logic
         plugin = this;
         NBTInjector.inject();
-        loggerinfo("Morevanillaitems plugin booting...");
+        loggerinfo("Morevanillaitems plugin booting... 0/3");
         Bukkit.getServer().getPluginManager().registerEvents(new OtherEventListener(), this);
         Bukkit.getServer().getPluginManager().registerEvents(new BowEventListener(),this);
         Bukkit.getServer().getPluginManager().registerEvents(new SwordEventListener(), this);
         Bukkit.getServer().getPluginManager().registerEvents(new CraftEventListener(), this);
         Bukkit.getServer().getPluginManager().registerEvents(new PlayerServerEventListener(), this);
         Bukkit.getPluginManager().registerEvents(new MenuFunctionListener(), this);
-        loggerinfo("Listener registered");
+        loggerinfo("Listener registered 1/3");
 
         CommandClass.commandlist.add("enderchest");
         CommandClass.commandlist.add("hp");
-        CommandClass.commandlist.add("test");
         for(String commandname : CommandClass.commandlist){
             Objects.requireNonNull(Bukkit.getPluginCommand(commandname)).setExecutor(new CommandClass());
         }
-        loggerinfo("Command registered");
+        loggerinfo("Command registered 2/3");
 
 
         ShapedRecipe recipe;
         List<String> itemlore = new ArrayList<>();
-
 
         itemlore.add("an Normal emerald sword");
         recipe = addRecipe(
@@ -93,8 +91,7 @@ public final class Morevanillaitems extends JavaPlugin {
         Bukkit.addRecipe(recipe);
         itemlore.clear();
 
-        loggerinfo("Recipe registered");
-
+        loggerinfo("Recipe registered 3/3");
         loggerinfo("All booting process ended.");
     }
 

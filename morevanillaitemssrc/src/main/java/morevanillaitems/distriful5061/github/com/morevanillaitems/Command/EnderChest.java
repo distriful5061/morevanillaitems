@@ -18,7 +18,7 @@ public class EnderChest {
         try{
             //Do any
             result = true;
-        } catch (Exception e){
+        } catch (Exception ignored){
             result = false;
         }
     }

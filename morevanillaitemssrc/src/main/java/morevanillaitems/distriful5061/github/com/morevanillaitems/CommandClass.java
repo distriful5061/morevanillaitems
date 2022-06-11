@@ -3,14 +3,27 @@ package morevanillaitems.distriful5061.github.com.morevanillaitems;
 import morevanillaitems.distriful5061.github.com.morevanillaitems.Command.EnderChest;
 import morevanillaitems.distriful5061.github.com.morevanillaitems.Command.hp;
 import morevanillaitems.distriful5061.github.com.morevanillaitems.Command.test;
+import org.bukkit.Bukkit;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
 import java.util.ArrayList;
+import java.util.Objects;
 
 
 public class CommandClass implements CommandExecutor {
     public static ArrayList<String> commandlist = new ArrayList<>();
+
+    public double getMaxHealth(Player p){
+        AttributeInstance urself = Objects.requireNonNull(p).getAttribute(Attribute.valueOf("GENERIC_MAX_HEALTH"));
+        double playermaxlife = Objects.requireNonNull(urself).getValue();
+        return playermaxlife;
+    }
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         String commandname = command.getName();
@@ -22,9 +35,6 @@ public class CommandClass implements CommandExecutor {
             case "hp":
                 hp hp = new hp(sender,command,label,args);
                 return hp.getResult();
-            case "test":
-                test test = new test(sender,command,label,args);
-                return test.getResult();
         }
         return false;
     }
