@@ -82,7 +82,7 @@
             <groupId>de.tr7zw</groupId>
             <artifactId>item-nbt-parent</artifactId>
             <version>2.9.2</version>
-            <scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
