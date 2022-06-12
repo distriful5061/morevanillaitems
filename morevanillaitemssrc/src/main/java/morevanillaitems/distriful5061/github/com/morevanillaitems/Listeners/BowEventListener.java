@@ -1,12 +1,9 @@
-package morevanillaitems.distriful5061.github.com.morevanillaitems;
-
-
+package morevanillaitems.distriful5061.github.com.morevanillaitems.Listeners;
 
 import de.tr7zw.nbtapi.NBTEntity;
 import de.tr7zw.nbtapi.NBTItem;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Material;
+import morevanillaitems.distriful5061.github.com.morevanillaitems.Morevanillaitems;
+import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.*;
@@ -18,8 +15,6 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
@@ -27,7 +22,7 @@ import java.util.HashMap;
 import java.util.Objects;
 import java.util.UUID;
 
-public class lis implements Listener{
+public class BowEventListener implements Listener{
     /*
     Documents(NBT)
     bow:
@@ -44,19 +39,27 @@ public class lis implements Listener{
     HashMap<UUID, Player> ArrowShooter = new HashMap<>();
     HashMap<UUID, Integer> LifeStealLevel = new HashMap<>();
 
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent e){
-        BowLeftClicked.put(e.getPlayer(),false);
+    public void addBowLeftClicked(Player p){
+        BowLeftClicked.put(p,false);
     }
 
-    @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent e){
-        BowLeftClicked.remove(e.getPlayer());
+    public void removeBowLeftClicked(Player p){
+        BowLeftClicked.remove(p);
+    }
+
+    public void checkItemNBT(ItemStack item){
+        NBTItem itemA = new NBTItem(item);
+        switch(Objects.requireNonNull(item.getItemMeta()).getDisplayName()) {
+            case default:
+                break;
+        }
     }
 
     @EventHandler
     public void onPlayerUsedBow(EntityShootBowEvent e){
         if(e.getProjectile().getType() == EntityType.ARROW){
+            checkItemNBT(e.getBow());
+
             //Bukkit.broadcastMessage(e.getEntity().getName());
             NBTItem playerbow = new NBTItem(Objects.requireNonNull(e.getBow()));
             if(playerbow.hasKey("noreducearrowsprobability")){
@@ -66,7 +69,6 @@ public class lis implements Listener{
             }
             if(playerbow.hasKey("flame")){
                 e.getProjectile().setFireTicks(40 * playerbow.getInteger("flame"));
-                e.getProjectile().setVisualFire(true);
             }
             NBTEntity arrow = new NBTEntity(e.getProjectile());
             double nbt_damage = 2;
@@ -96,6 +98,7 @@ public class lis implements Listener{
         if(e.getCause().equals(EntityDamageEvent.DamageCause.PROJECTILE) && e.getDamager().getType() == EntityType.ARROW) {
             UUID arrowuuid = e.getDamager().getUniqueId();
             ///* For Debug
+            Bukkit.broadcastMessage("--------");
             Bukkit.broadcastMessage(e.getEntity().getName() + ":" + e.getDamage() + ":" + e.getEntity().getFireTicks() + ":" + e.getDamager().getFireTicks());
             e.getEntity().setFireTicks(e.getDamager().getFireTicks());
             Bukkit.broadcastMessage("Ok");
@@ -107,7 +110,11 @@ public class lis implements Listener{
             double arrdmg = e.getDamage();
             double lifesteallvl = LifeStealLevel.get(arrowuuid);
             double damagecnt = arrdmg * (lifesteallvl / 100);
-            Bukkit.broadcastMessage("damagecnt:"+damagecnt+":"+lifesteallvl+":"+arrdmg+":"+lifesteallvl / 100);// For Debug
+
+            ///* For Debug
+            Bukkit.broadcastMessage("damagecnt:"+damagecnt+":"+lifesteallvl+":"+arrdmg+":"+lifesteallvl / 100);
+            Bukkit.broadcastMessage("--------");
+            //*/
             AttributeInstance urself = Objects.requireNonNull(p).getAttribute(Attribute.valueOf("GENERIC_MAX_HEALTH"));
             double playermaxlife = Objects.requireNonNull(urself).getValue();
             p.setHealth(Math.min(p.getHealth() + damagecnt, playermaxlife));
@@ -117,22 +124,24 @@ public class lis implements Listener{
     }
 
     @EventHandler
-    public void onArrowHitBlocksOrEntity(ProjectileHitEvent e){
+    public void onArrowHitBlocks(ProjectileHitEvent e){
         if(e.getEntity().getType() == EntityType.ARROW && e.getHitBlock() != null && e.getHitEntity() == null){
             e.getEntity().remove();
         }
     }
 
     @EventHandler
-    public void onPlayerInterracted(PlayerInteractEvent e){
+    public void onPlayerInterracted(PlayerInteractEvent e){//処理が終わった後のreturn;は保険なので気にしないでください。
         PlayerInventory playerinv = e.getPlayer().getInventory();
         ItemStack iteminmainhand = playerinv.getItemInMainHand();
         Material playeritemmaterial = iteminmainhand.getType();
 
-        if(playeritemmaterial == Material.AIR) return;
+        checkItemNBT(iteminmainhand);
+
+        if(playeritemmaterial != Material.BOW) return;
         NBTItem playeritemnbt = new NBTItem(iteminmainhand);
         if(e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK){
-            if(playeritemmaterial == Material.BOW && playeritemnbt.hasKey("arrowfirerate")) {
+            if(playeritemnbt.hasKey("arrowfirerate")) {
                 e.setCancelled(true);
                 if(BowLeftClicked.get(e.getPlayer())) return;
                 if( !(playerinv.contains(Material.ARROW)) && e.getPlayer().getGameMode() != GameMode.CREATIVE) return;
@@ -161,7 +170,6 @@ public class lis implements Listener{
                 arrow.setDamage(nbt_damage + nbt_power);//パワーレベル 1Lv=0.5ダメージ
                 if(playeritemnbt.hasKey("flame")){
                     arrow.setFireTicks(40 * playeritemnbt.getInteger("flame"));//2秒(40Tick) * flameレベル
-                    arrow.setVisualFire(true);
                 }
 
                 int nbt_lifesteal = 0;//nbtarrow系の処理
@@ -181,7 +189,7 @@ public class lis implements Listener{
                 return;
             }
         } else if(e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK){
-            if(playeritemmaterial == Material.BOW && playeritemnbt.hasKey("arrowfirerate")) {
+            if(playeritemnbt.hasKey("arrowfirerate")) {
                 e.setCancelled(true);
                 if(BowLeftClicked.get(e.getPlayer())) return;
                 if( !(playerinv.contains(Material.ARROW)) && e.getPlayer().getGameMode() != GameMode.CREATIVE) return;
@@ -210,7 +218,6 @@ public class lis implements Listener{
                 arrow.setDamage(nbt_damage + nbt_power);//パワーレベル 1Lv=0.5ダメージ
                 if(playeritemnbt.hasKey("flame")){
                     arrow.setFireTicks(40 * playeritemnbt.getInteger("flame"));//2秒(40Tick) * flameレベル
-                    arrow.setVisualFire(true);
                 }
 
                 int nbt_lifesteal = 0;//nbtarrow系の処理

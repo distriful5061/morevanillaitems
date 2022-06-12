@@ -1,6 +1,7 @@
 package morevanillaitems.distriful5061.github.com.morevanillaitems;
 
-import org.bukkit.Bukkit;
+import morevanillaitems.distriful5061.github.com.morevanillaitems.Command.EnderChest;
+import morevanillaitems.distriful5061.github.com.morevanillaitems.Command.hp;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.command.Command;
@@ -14,25 +15,24 @@ import java.util.Objects;
 
 public class CommandClass implements CommandExecutor {
     public static ArrayList<String> commandlist = new ArrayList<>();
+
+    public double getMaxHealth(Player p){
+        AttributeInstance urself = Objects.requireNonNull(p).getAttribute(Attribute.valueOf("GENERIC_MAX_HEALTH"));
+        double playermaxlife = Objects.requireNonNull(urself).getValue();
+        return playermaxlife;
+    }
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         String commandname = command.getName();
         if(!(commandlist.contains(commandname))) return false;
         switch(commandname.toLowerCase()){
-            case "craft":
-                Morevanillaitems.displayMenu((Player) sender);
-                return true;
             case "enderchest":
-                return true;
+                EnderChest enderchest = new EnderChest(sender,command,label,args);
+                return enderchest.getResult();
             case "hp":
-                Player p = Bukkit.getPlayer(sender.getName());
-                AttributeInstance urself = Objects.requireNonNull(p).getAttribute(Attribute.valueOf("GENERIC_MAX_HEALTH"));
-                double playermaxlife = Objects.requireNonNull(urself).getValue();
-                sender.sendMessage(playermaxlife +":"+p.getHealth());
-                return true;
-            case "test":
-                sender.sendMessage("test");
-                return true;
+                hp hp = new hp(sender,command,label,args);
+                return hp.getResult();
         }
         return false;
     }
