@@ -22,7 +22,6 @@ import java.util.Objects;
 
 public final class Morevanillaitems extends JavaPlugin {
     private static Morevanillaitems plugin;
-    private static final Morevanillaitems logger = new Morevanillaitems();;
 
 
     public static Morevanillaitems getPlugin(){
@@ -30,14 +29,14 @@ public final class Morevanillaitems extends JavaPlugin {
     }
 
     public void loggerinfo(String content){
-        getLogger().info(content);
+        getPlugin().getLogger().info(content);
     }
 
     public static ShapedRecipe addRecipe(Material itemmaterial, int amount, String itemname, List<String> itemlore, boolean unbreakable, String namespacekey, String shape1, String shape2, String shape3){
         ItemStack item = new ItemStack(itemmaterial,amount);
         ItemMeta meta = item.getItemMeta();
         if(meta == null){
-            logger.loggerinfo("ItemMeta is null");
+            getPlugin().getLogger().info("ItemMeta is null");
         }
         Objects.requireNonNull(meta).setDisplayName(itemname);
         meta.setLore(itemlore);
@@ -52,14 +51,13 @@ public final class Morevanillaitems extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
         plugin = this;
-        NBTInjector.inject();
         loggerinfo("Morevanillaitems plugin booting... 0/3");
         Bukkit.getServer().getPluginManager().registerEvents(new OtherEventListener(), this);
         Bukkit.getServer().getPluginManager().registerEvents(new BowEventListener(),this);
         Bukkit.getServer().getPluginManager().registerEvents(new SwordEventListener(), this);
         Bukkit.getServer().getPluginManager().registerEvents(new CraftEventListener(), this);
         Bukkit.getServer().getPluginManager().registerEvents(new PlayerServerEventListener(), this);
-        Bukkit.getPluginManager().registerEvents(new MenuFunctionListener(), this);
+        Bukkit.getServer().getPluginManager().registerEvents(new MenuFunctionListener(), this);
         loggerinfo("Listener registered 1/3");
 
         CommandClass.commandlist.add("enderchest");
@@ -91,6 +89,7 @@ public final class Morevanillaitems extends JavaPlugin {
 
         loggerinfo("Recipe registered 3/3");
         loggerinfo("All booting process ended.");
+        NBTInjector.inject();
     }
 
     @Override
