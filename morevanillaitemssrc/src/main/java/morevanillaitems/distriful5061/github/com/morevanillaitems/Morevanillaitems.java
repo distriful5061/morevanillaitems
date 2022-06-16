@@ -89,7 +89,6 @@ public final class Morevanillaitems extends JavaPlugin {
 
         loggerinfo("Recipe registered 3/3");
         loggerinfo("All booting process ended.");
-        NBTInjector.inject();
     }
 
     @Override

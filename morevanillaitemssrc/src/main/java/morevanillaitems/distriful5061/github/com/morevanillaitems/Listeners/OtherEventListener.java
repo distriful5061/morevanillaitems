@@ -15,8 +15,6 @@ public class OtherEventListener implements Listener {
     public void checkItemNBT(ItemStack item){
         NBTItem itemA = new NBTItem(item);
         switch(Objects.requireNonNull(item.getItemMeta()).getDisplayName()) {
-            case default:
-                break;
         }
     }
 
